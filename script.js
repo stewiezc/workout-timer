@@ -9,11 +9,13 @@ const resetButton = document.getElementById('reset');
 const beepStartWork = document.getElementById('beepStartWork');
 const beepStartRest = document.getElementById('beepStartRest');
 const beepFinishWorkout = document.getElementById('beepFinishWorkout');
+const silentAudio = new Audio();  // Create a silent audio element
 
 let workTime, restTime, rounds, startDelay;
 let currentRound = 0;
 let currentTime;
 let isWorkPhase = true;
+let audioUnlocked = false;
 
 function updateDisplay() {
     const minutes = Math.floor(currentTime / 60);
@@ -23,6 +25,10 @@ function updateDisplay() {
 }
 
 function playBeep(audioElement) {
+    if (!audioUnlocked) {
+        silentAudio.play();
+        audioUnlocked = true;
+    }
     audioElement.currentTime = 0; // Rewind to the start
     audioElement.play();
 }
