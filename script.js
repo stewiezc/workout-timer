@@ -9,13 +9,26 @@ const resetButton = document.getElementById('reset');
 const beepStartWork = document.getElementById('beepStartWork');
 const beepStartRest = document.getElementById('beepStartRest');
 const beepFinishWorkout = document.getElementById('beepFinishWorkout');
-const silentAudio = new Audio();  // Create a silent audio element
 
 let workTime, restTime, rounds, startDelay;
 let currentRound = 0;
 let currentTime;
 let isWorkPhase = true;
 let audioUnlocked = false;
+
+// Function to unlock audio on user interaction
+function unlockAudio() {
+    if (!audioUnlocked) {
+        beepStartWork.play().then(() => {
+            beepStartWork.pause();
+            beepStartWork.currentTime = 0;
+            audioUnlocked = true;
+            console.log('Audio unlocked');
+        }).catch((error) => {
+            console.error('Failed to unlock audio:', error);
+        });
+    }
+}
 
 function updateDisplay() {
     const minutes = Math.floor(currentTime / 60);
@@ -25,16 +38,17 @@ function updateDisplay() {
 }
 
 function playBeep(audioElement) {
-    if (!audioUnlocked) {
-        silentAudio.play();
-        audioUnlocked = true;
-    }
+    console.log('Playing beep');
     audioElement.currentTime = 0; // Rewind to the start
-    audioElement.play();
+    audioElement.play().catch((error) => {
+        console.error('Failed to play audio:', error);
+    });
 }
 
 function startTimer() {
     if (isRunning) return;
+
+    unlockAudio(); // Ensure audio is unlocked
 
     workTime = parseInt(document.getElementById('workMinutes').value) * 60 + parseInt(document.getElementById('workSeconds').value);
     restTime = parseInt(document.getElementById('restMinutes').value) * 60 + parseInt(document.getElementById('restSeconds').value);
