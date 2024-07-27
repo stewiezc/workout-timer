@@ -6,9 +6,6 @@ const currentRoundDisplay = document.getElementById('currentRound');
 const startButton = document.getElementById('start');
 const stopButton = document.getElementById('stop');
 const resetButton = document.getElementById('reset');
-const tabataPresetButton = document.getElementById('tabataPreset');
-const emomPresetButton = document.getElementById('emomPreset');
-const forTimePresetButton = document.getElementById('forTimePreset');
 const beepStartWork = document.getElementById('beepStartWork');
 const beepStartRest = document.getElementById('beepStartRest');
 const beepFinishWorkout = document.getElementById('beepFinishWorkout');
@@ -99,18 +96,32 @@ function resetTimer() {
     updateDisplay();
 }
 
-function setPreset(workMinutes, workSeconds, restMinutes, restSeconds, roundsCount) {
+function setPreset(workMinutes, workSeconds, restMinutes, restSeconds, roundsCount, startDelaySecs) {
     document.getElementById('workMinutes').value = workMinutes;
     document.getElementById('workSeconds').value = workSeconds;
     document.getElementById('restMinutes').value = restMinutes;
     document.getElementById('restSeconds').value = restSeconds;
     document.getElementById('rounds').value = roundsCount;
+    document.getElementById('startDelay').value = startDelaySecs;
     resetTimer();
 }
 
-tabataPresetButton.addEventListener('click', () => setPreset(0, 20, 0, 10, 8));
-emomPresetButton.addEventListener('click', () => setPreset(1, 0, 0, 0, 20));
-forTimePresetButton.addEventListener('click', () => setPreset(5, 0, 0, 0, 1));
+// Load and parse the YAML configuration file
+fetch('workouts.yaml')
+    .then(response => response.text())
+    .then(data => {
+        const config = jsyaml.load(data);
+        const presetsContainer = document.getElementById('presets');
+
+        config.workouts.forEach(workout => {
+            const button = document.createElement('button');
+            button.textContent = workout.name;
+            button.addEventListener('click', () => setPreset(workout.workTimeMins, workout.workTimeSecs, workout.restTimeMins, workout.restTimeSecs, workout.rounds, workout.startDelaySecs));
+            presetsContainer.appendChild(button);
+        });
+    })
+    .catch(error => console.error('Error loading the YAML file:', error));
+
 startButton.addEventListener('click', startTimer);
 stopButton.addEventListener('click', stopTimer);
 resetButton.addEventListener('click', resetTimer);

@@ -25,11 +25,7 @@
             <label for="startDelay">Start Delay (sec):</label>
             <input type="number" id="startDelay" value="5">
         </div>
-        <div class="presets">
-            <button id="tabataPreset">Tabata</button>
-            <button id="emomPreset">EMOM</button>
-            <button id="forTimePreset">For Time</button>
-        </div>
+        <div class="presets" id="presets"></div>
         <div id="timer">00:00</div>
         <div id="currentRound">Round: 1</div>
         <div class="controls">
@@ -41,6 +37,164 @@
     <audio id="beepStartWork" src="start_work.mp3"></audio>
     <audio id="beepStartRest" src="start_rest.mp3"></audio>
     <audio id="beepFinishWorkout" src="finish_workout.mp3"></audio>
-    <script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+    <script>
+        const yamlData = `
+        workouts:
+          - name: Tabata
+            rounds: 8
+            workTimeMins: 0
+            workTimeSecs: 20
+            restTimeMins: 0
+            restTimeSecs: 10
+            startDelaySecs: 5
+          - name: EMOM
+            rounds: 20
+            workTimeMins: 1
+            workTimeSecs: 0
+            restTimeMins: 0
+            restTimeSecs: 0
+            startDelaySecs: 5
+          - name: For Time
+            rounds: 1
+            workTimeMins: 5
+            workTimeSecs: 0
+            restTimeMins: 0
+            restTimeSecs: 0
+            startDelaySecs: 5
+          - name: LoadedCarry
+            rounds: 4
+            workTimeMins: 0
+            workTimeSecs: 55
+            restTimeMins: 0
+            restTimeSecs: 10
+            startDelaySecs: 10
+        `;
+
+        const config = jsyaml.load(yamlData);
+        const presetsContainer = document.getElementById('presets');
+
+        config.workouts.forEach(workout => {
+            const button = document.createElement('button');
+            button.textContent = workout.name;
+            button.addEventListener('click', () => setPreset(workout.workTimeMins, workout.workTimeSecs, workout.restTimeMins, workout.restTimeSecs, workout.rounds, workout.startDelaySecs));
+            presetsContainer.appendChild(button);
+        });
+
+        function setPreset(workMinutes, workSeconds, restMinutes, restSeconds, roundsCount, startDelaySecs) {
+            document.getElementById('workMinutes').value = workMinutes;
+            document.getElementById('workSeconds').value = workSeconds;
+            document.getElementById('restMinutes').value = restMinutes;
+            document.getElementById('restSeconds').value = restSeconds;
+            document.getElementById('rounds').value = roundsCount;
+            document.getElementById('startDelay').value = startDelaySecs;
+            resetTimer();
+        }
+
+        // Timer functions remain the same...
+        let timerInterval;
+        let isRunning = false;
+
+        const timerDisplay = document.getElementById('timer');
+        const currentRoundDisplay = document.getElementById('currentRound');
+        const startButton = document.getElementById('start');
+        const stopButton = document.getElementById('stop');
+        const resetButton = document.getElementById('reset');
+        const beepStartWork = document.getElementById('beepStartWork');
+        const beepStartRest = document.getElementById('beepStartRest');
+        const beepFinishWorkout = document.getElementById('beepFinishWorkout');
+
+        let workTime, restTime, rounds, startDelay;
+        let currentRound = 0;
+        let currentTime;
+        let isWorkPhase = true;
+
+        function updateDisplay() {
+            const minutes = Math.floor(currentTime / 60);
+            const seconds = currentTime % 60;
+            timerDisplay.textContent = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            currentRoundDisplay.textContent = `Round: ${currentRound + 1}`;
+        }
+
+        function playBeep(audioElement) {
+            audioElement.currentTime = 0; // Rewind to the start
+            audioElement.play();
+        }
+
+        function startTimer() {
+            if (isRunning) return;
+
+            workTime = parseInt(document.getElementById('workMinutes').value) * 60 + parseInt(document.getElementById('workSeconds').value);
+            restTime = parseInt(document.getElementById('restMinutes').value) * 60 + parseInt(document.getElementById('restSeconds').value);
+            rounds = parseInt(document.getElementById('rounds').value);
+            startDelay = parseInt(document.getElementById('startDelay').value);
+
+            isRunning = true;
+            currentRound = 0;
+            currentTime = startDelay;
+            isWorkPhase = true;
+            updateDisplay();
+
+            const startDelayInterval = setInterval(() => {
+                if (currentTime > 0) {
+                    currentTime--;
+                    updateDisplay();
+                } else {
+                    clearInterval(startDelayInterval);
+                    playBeep(beepStartWork);
+                    currentTime = workTime;
+                    updateDisplay();
+                    timerInterval = setInterval(runTimer, 1000);
+                }
+            }, 1000);
+        }
+
+        function runTimer() {
+            if (currentTime > 0) {
+                currentTime--;
+            } else {
+                if (isWorkPhase) {
+                    if (currentRound < rounds - 1) {
+                        if (restTime > 0) {
+                            playBeep(beepStartRest);
+                        }
+                        currentRound++;
+                        isWorkPhase = false;
+                        currentTime = restTime;
+                    } else {
+                        clearInterval(timerInterval);
+                        isRunning = false;
+                        playBeep(beepFinishWorkout);
+                    }
+                } else {
+                    playBeep(beepStartWork);
+                    isWorkPhase = true;
+                    currentTime = workTime;
+                }
+            }
+            updateDisplay();
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            isRunning = false;
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            currentRound = 0;
+            isWorkPhase = true;
+            workTime = parseInt(document.getElementById('workMinutes').value) * 60 + parseInt(document.getElementById('workSeconds').value);
+            currentTime = workTime;
+            updateDisplay();
+        }
+
+        startButton.addEventListener('click', startTimer);
+        stopButton.addEventListener('click', stopTimer);
+        resetButton.addEventListener('click', resetTimer);
+
+        updateDisplay();
+    </script>
 </body>
 </html>
