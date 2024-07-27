@@ -14,6 +14,8 @@ body {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 600px;
 }
 
 .inputs {
@@ -46,20 +48,20 @@ body {
 }
 
 #timer {
-    font-size: 8em;
+    font-size: 6em;
     margin: 20px 0;
     color: black;
     font-weight: bold;
 }
 
 #currentRound {
-    font-size: 6em;
+    font-size: 3em;
     margin: 20px 0;
     color: #333;
 }
 
 .controls button, .presets button {
-    font-size: 1.2em;
+    font-size: 1em;
     margin: 5px;
     padding: 10px 20px;
     border: none;
@@ -88,5 +90,25 @@ body {
 }
 
 .inputs input[type="number"] {
-    font-size: 1.5em;
+    font-size: 1.2em;
+}
+
+@media (max-width: 600px) {
+    #timer {
+        font-size: 4em;
+    }
+
+    #currentRound {
+        font-size: 2em;
+    }
+
+    .controls button, .presets button {
+        font-size: 0.8em;
+        padding: 8px 16px;
+    }
+
+    .inputs input[type="number"] {
+        font-size: 1em;
+        width: 50px;
+    }
 }
