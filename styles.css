@@ -23,30 +23,26 @@ body {
     align-items: center;
 }
 
+.inputs .input-group {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+}
+
 .inputs label {
-    margin: 5px 0;
     font-weight: bold;
+    margin-right: 10px;
 }
 
 .inputs input[type="number"] {
     margin: 0 5px;
     padding: 5px;
-    width: 70px;
+    width: 60px;
     text-align: center;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 1em;
     -webkit-appearance: none;
-}
-
-.inputs .time-input {
-    display: flex;
-    align-items: center;
-    margin: 5px 0;
-}
-
-.inputs .time-input input {
-    width: 60px;
 }
 
 #timer {
@@ -57,7 +53,7 @@ body {
 }
 
 #currentRound {
-    font-size: 2em;
+    font-size: 6em;
     margin: 20px 0;
     color: #333;
 }

@@ -10,20 +10,28 @@
     <div class="container">
         <h1>Workout Timer</h1>
         <div class="inputs">
-            <label for="rounds">Rounds:</label>
-            <input type="number" id="rounds" value="8">
-            <div class="time-input">
-                <label for="workMinutes">Work Time:</label>
-                <input type="number" id="workMinutes" value="0">m
-                <input type="number" id="workSeconds" value="20">s
+            <div class="input-group">
+                <label for="rounds">Rounds:</label>
+                <input type="number" id="rounds" value="8">
             </div>
             <div class="time-input">
-                <label for="restMinutes">Rest Time:</label>
-                <input type="number" id="restMinutes" value="0">m
-                <input type="number" id="restSeconds" value="10">s
+                <div class="input-group">
+                    <label for="workMinutes">Work Time:</label>
+                    <input type="number" id="workMinutes" value="0">m
+                    <input type="number" id="workSeconds" value="20">s
+                </div>
             </div>
-            <label for="startDelay">Start Delay (sec):</label>
-            <input type="number" id="startDelay" value="5">
+            <div class="time-input">
+                <div class="input-group">
+                    <label for="restMinutes">Rest Time:</label>
+                    <input type="number" id="restMinutes" value="0">m
+                    <input type="number" id="restSeconds" value="10">s
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="startDelay">Start Delay (sec):</label>
+                <input type="number" id="startDelay" value="5">
+            </div>
         </div>
         <div class="presets" id="presets"></div>
         <div id="timer">00:00</div>
