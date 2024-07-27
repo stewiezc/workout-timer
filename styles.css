@@ -50,13 +50,16 @@ body {
 }
 
 #timer {
-    font-size: 3em;
+    font-size: 8em;
     margin: 20px 0;
+    color: black;
+    font-weight: bold;
 }
 
 #currentRound {
-    font-size: 1.5em;
-    margin: 10px 0;
+    font-size: 2em;
+    margin: 20px 0;
+    color: #333;
 }
 
 .controls button, .presets button {
